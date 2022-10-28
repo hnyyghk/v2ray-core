@@ -201,6 +201,18 @@ func (c *InboundDetourConfig) Build() (*core.InboundHandlerConfig, error) {
 	}, nil
 }
 
+func (c *InboundDetourConfig) BuildRawConfig() (interface{}, error) {
+	settings := []byte("{}")
+	if c.Settings != nil {
+		settings = ([]byte)(*c.Settings)
+	}
+	rawConfig, err := inboundConfigLoader.LoadWithID(settings, c.Protocol)
+	if err != nil {
+		return nil, newError("failed to load inbound detour config.").Base(err)
+	}
+	return rawConfig, err
+}
+
 type OutboundDetourConfig struct {
 	Protocol      string                `json:"protocol"`
 	SendThrough   *cfgcommon.Address    `json:"sendThrough"`
